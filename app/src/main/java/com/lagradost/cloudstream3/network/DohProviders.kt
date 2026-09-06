@@ -86,6 +86,14 @@ fun OkHttpClient.Builder.addQuad9Dns() = (
         )
     ))
 
+fun OkHttpClient.Builder.addTiarDns() = (
+    addGenericDns(
+        "https://doh.tiar.app/dns-query",
+        listOf(
+            "174.138.29.175",
+        )
+    ))
+
 fun OkHttpClient.Builder.addDnsSbDns() = (
         addGenericDns(
             "https://doh.dns.sb/dns-query",
