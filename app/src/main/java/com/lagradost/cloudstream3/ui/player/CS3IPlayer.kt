@@ -754,6 +754,12 @@ class CS3IPlayer : IPlayer {
         }
 
         fun tryCreateEngine(context: Context, diskCacheSize: Long): CronetEngine? {
+            val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
+            val dns = settingsManager.getInt(context.getString(R.string.dns_pref), 0)
+            
+            if (dns == 9) {
+                return null
+            }
             // Fast case, no need to recreate it
             cronetEngine?.let {
                 return it
