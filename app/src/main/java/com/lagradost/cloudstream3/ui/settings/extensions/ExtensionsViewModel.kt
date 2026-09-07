@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.amap
 import com.lagradost.cloudstream3.mvvm.debugAssert
@@ -51,9 +50,7 @@ class ExtensionsViewModel : ViewModel() {
     //TODO CACHE GET REQUESTS
     // DO not use viewModelScope.launchSafe, it will ANR on slow internet
     fun loadStats() = ioSafe {
-        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
-            ?: emptyArray()) + PREBUILT_REPOSITORIES
-
+        val urls = RepositoryManager.getRepositories() + PREBUILT_REPOSITORIES
         val onlinePlugins = urls.toList().amap {
             RepositoryManager.getRepoPlugins(it)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.plugin.url }
@@ -86,8 +83,8 @@ class ExtensionsViewModel : ViewModel() {
         _pluginStats.postValue(stats)
     }
 
-    private fun repos() = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
-        ?: emptyArray()) + PREBUILT_REPOSITORIES
+    private fun repos() =
+    RepositoryManager.getRepositories() + PREBUILT_REPOSITORIES
 
     fun loadRepositories() {
         val urls = repos()
