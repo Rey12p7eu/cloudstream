@@ -58,6 +58,7 @@ import com.lagradost.cloudstream3.utils.UiText
 import com.lagradost.cloudstream3.utils.downloader.DownloadFileManagement.sanitizeFilename
 import com.lagradost.cloudstream3.utils.extractorApis
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import dalvik.system.PathClassLoader
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -69,6 +70,9 @@ import java.io.InputStreamReader
 // Different keys for local and not since local can be removed at any time without app knowing, hence the local are getting rebuilt on every app start
 const val PLUGINS_KEY = "PLUGINS_KEY"
 const val PLUGINS_KEY_LOCAL = "PLUGINS_KEY_LOCAL"
+
+fun accountPluginsKey() = "${DataStoreHelper.currentAccount}/$PLUGINS_KEY"
+fun accountPluginsLocalKey() = "${DataStoreHelper.currentAccount}/$PLUGINS_KEY_LOCAL"
 
 const val EXTENSIONS_CHANNEL_ID = "cloudstream3.extensions"
 const val EXTENSIONS_CHANNEL_NAME = "Extensions"
@@ -127,10 +131,10 @@ object PluginManager {
             if (data.isOnline) {
                 val plugins = getPluginsOnline()
                 val newPlugins = plugins.filter { it.filePath != data.filePath } + data
-                setKey(PLUGINS_KEY, newPlugins)
+                setKey(accountPluginsKey(), newPlugins)
             } else {
                 val plugins = getPluginsLocal()
-                setKey(PLUGINS_KEY_LOCAL, plugins.filter { it.filePath != data.filePath } + data)
+                setKey(accountPluginsLocalKey(), plugins.filter { it.filePath != data.filePath } + data)
             }
         }
     }
@@ -140,10 +144,10 @@ object PluginManager {
         lock.withLock {
             if (data.isOnline) {
                 val plugins = getPluginsOnline().filter { it.url != data.url }
-                setKey(PLUGINS_KEY, plugins)
+                setKey(accountPluginsKey(), plugins)
             } else {
                 val plugins = getPluginsLocal().filter { it.filePath != data.filePath }
-                setKey(PLUGINS_KEY_LOCAL, plugins)
+                setKey(accountPluginsLocalKey(), plugins)
             }
         }
     }
@@ -157,7 +161,7 @@ object PluginManager {
             safe {
                 if (file.exists()) file.deleteRecursively()
             }
-            setKey(PLUGINS_KEY, plugins)
+            setKey(accountPluginsKey(), plugins)
         }
     }
 
@@ -173,14 +177,13 @@ object PluginManager {
             }
         }
     }
-
-
+    
     fun getPluginsOnline(): Array<PluginData> {
-        return getKey<Array<PluginData>>(PLUGINS_KEY) ?: emptyArray()
+        return getKey<Array<PluginData>>(accountPluginsKey()) ?: emptyArray()
     }
-
+    
     fun getPluginsLocal(): Array<PluginData> {
-        return getKey<Array<PluginData>>(PLUGINS_KEY_LOCAL) ?: emptyArray()
+        return getKey<Array<PluginData>>(accountPluginsLocalKey()) ?: emptyArray()
     }
 
     private val CLOUD_STREAM_FOLDER =
