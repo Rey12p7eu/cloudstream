@@ -260,7 +260,10 @@ object RepositoryManager {
      * Also deletes downloaded repository plugins
      */
     suspend fun removeRepository(context: Context, repository: RepositoryData) {
-        val extensionsDir = File(context.filesDir, ONLINE_PLUGINS_FOLDER)
+        val extensionsDir = File(
+            context.filesDir,
+            "$ONLINE_PLUGINS_FOLDER/${DataStoreHelper.currentAccount}"
+        )
 
         repoLock.withLock {
             val currentRepos = getKey<Array<RepositoryData>>(accountRepositoriesKey()) ?: emptyArray()
