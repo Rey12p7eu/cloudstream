@@ -751,7 +751,7 @@ object PluginManager {
     ): File {
         val folderName = getPluginSanitizedFileName(repositoryUrl) // Guaranteed unique
         val fileName = getPluginSanitizedFileName(internalName)
-        return File("${context.filesDir}/${ONLINE_PLUGINS_FOLDER}/${folderName}/$fileName.cs3")
+        return File("${context.filesDir}/${ONLINE_PLUGINS_FOLDER}/${DataStoreHelper.currentAccount}/${folderName}/$fileName.cs3")
     }
 
     suspend fun downloadPlugin(
