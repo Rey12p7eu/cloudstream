@@ -47,7 +47,6 @@ import com.lagradost.cloudstream3.plugins.RepositoryManager.PREBUILT_REPOSITORIE
 import com.lagradost.cloudstream3.plugins.RepositoryManager.downloadPluginToFile
 import com.lagradost.cloudstream3.plugins.RepositoryManager.getRepoPlugins
 import com.lagradost.cloudstream3.plugins.RepositoryManager.sha256
-import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
 import com.lagradost.cloudstream3.utils.AppContextUtils.getApiProviderLangSettings
 import com.lagradost.cloudstream3.utils.AppUtils.parseJson
@@ -281,8 +280,7 @@ object PluginManager {
         ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(activity)
         afterPluginsLoadedEvent.invoke(false)
 
-        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
-            ?: emptyArray()) + PREBUILT_REPOSITORIES
+       val urls = RepositoryManager.getRepositories() + PREBUILT_REPOSITORIES
 
         val onlinePlugins = urls.toList().amap {
             getRepoPlugins(it) ?: emptyList()
@@ -359,8 +357,7 @@ object PluginManager {
         assertNonRecursiveCallstack()
 
         val newDownloadPlugins = mutableListOf<String>()
-        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
-            ?: emptyArray()) + PREBUILT_REPOSITORIES
+        val urls = RepositoryManager.getRepositories() + PREBUILT_REPOSITORIES
         val onlinePlugins = urls.toList().amap {
             getRepoPlugins(it)?.toList() ?: emptyList()
         }.flatten().distinctBy { it.plugin.url }
@@ -536,7 +533,7 @@ object PluginManager {
         }
 
         // Make sure all local plugins are fully refreshed.
-        removeKey(PLUGINS_KEY_LOCAL)
+        removeKey(accountPluginsLocalKey())
 
         sortedPlugins?.sortedBy { it.name }?.amap { file ->
             try {
@@ -838,8 +835,7 @@ object PluginManager {
         ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(activity)
         afterPluginsLoadedEvent.invoke(false)
 
-        val urls = (getKey<Array<RepositoryData>>(REPOSITORIES_KEY)
-            ?: emptyArray()) + PREBUILT_REPOSITORIES
+        val urls = RepositoryManager.getRepositories() + PREBUILT_REPOSITORIES
         val onlinePlugins = urls.toList().amap {
             getRepoPlugins(it) ?: emptyList()
         }.flatten().distinctBy { it.plugin.url }
