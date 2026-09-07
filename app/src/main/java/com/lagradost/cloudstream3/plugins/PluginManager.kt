@@ -734,6 +734,18 @@ object PluginManager {
      * Spits out a unique and safe filename based on name.
      * Used for repo folders (using repo url) and plugin file names (using internalName)
      * */
+     
+     fun unloadAccountPlugins(context: Context, accountId: String) {
+         val accountDir = File(
+             context.filesDir,
+             "$ONLINE_PLUGINS_FOLDER/$accountId"
+         ).absolutePath + File.separator
+         
+         plugins.keys.toList()
+             .filter { it.startsWith(accountDir) }
+             .forEach { unloadPlugin(it) }
+     }
+     
     fun getPluginSanitizedFileName(name: String): String {
         return sanitizeFilename(
             name,
