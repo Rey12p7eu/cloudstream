@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.plugins.PluginManager.getPluginSanitizedFileNa
 import com.lagradost.cloudstream3.plugins.PluginManager.unloadPlugin
 import com.lagradost.cloudstream3.ui.settings.extensions.REPOSITORIES_KEY
 import com.lagradost.cloudstream3.ui.settings.extensions.RepositoryData
+import com.lagradost.cloudstream3.utils.DataStoreHelper
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerialName
@@ -97,6 +98,8 @@ data class PluginWrapper(
 
 object RepositoryManager {
     const val ONLINE_PLUGINS_FOLDER = "Extensions"
+    fun accountRepositoriesKey() =
+    "${DataStoreHelper.currentAccount}/$REPOSITORIES_KEY"
     val PREBUILT_REPOSITORIES: Array<RepositoryData> by lazy {
         getKey<Array<RepositoryData>>("PREBUILT_REPOSITORIES") ?: emptyArray()
     }
@@ -240,7 +243,7 @@ object RepositoryManager {
     }
 
     fun getRepositories(): Array<RepositoryData> {
-        return getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+        return getKey<Array<RepositoryData>>(accountRepositoriesKey()) ?: emptyArray()
     }
 
     // Don't want to read before we write in another thread
@@ -249,7 +252,7 @@ object RepositoryManager {
         repoLock.withLock {
             val currentRepos = getRepositories()
             // No duplicates
-            setKey(REPOSITORIES_KEY, (currentRepos + repository).distinctBy { it.url })
+            setKey(accountRepositoriesKey(), (currentRepos + repository).distinctBy { it.url })
         }
     }
 
@@ -260,10 +263,10 @@ object RepositoryManager {
         val extensionsDir = File(context.filesDir, ONLINE_PLUGINS_FOLDER)
 
         repoLock.withLock {
-            val currentRepos = getKey<Array<RepositoryData>>(REPOSITORIES_KEY) ?: emptyArray()
+            val currentRepos = getKey<Array<RepositoryData>>(accountRepositoriesKey()) ?: emptyArray()
             // No duplicates
             val newRepos = currentRepos.filter { it.url != repository.url }
-            setKey(REPOSITORIES_KEY, newRepos)
+            setKey(accountRepositoriesKey(), newRepos)
         }
 
         val file = File(
