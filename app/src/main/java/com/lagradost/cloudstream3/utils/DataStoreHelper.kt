@@ -16,6 +16,7 @@ import com.lagradost.cloudstream3.CommonActivity.showToast
 import com.lagradost.cloudstream3.DubStatus
 import com.lagradost.cloudstream3.EpisodeResponse
 import com.lagradost.cloudstream3.MainActivity
+import com.lagradost.cloudstream3.plugins.PluginManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.Score
 import com.lagradost.cloudstream3.SearchQuality
@@ -197,7 +198,16 @@ object DataStoreHelper {
 
     fun setAccount(account: Account) {
         val homepage = currentHomePage
+        val oldAccountId = currentAccount
+        
         selectedKeyIndex = account.keyIndex
+        
+        if (oldAccountId != currentAccount) {
+            context?.let {
+                PluginManager.switchAccountPlugins(it, oldAccountId)
+            }
+        }
+        
         AccountManager.updateAccountIds()
         showToast(context?.getString(R.string.logged_account, account.name) ?: account.name)
         MainActivity.bookmarksUpdatedEvent(true)
