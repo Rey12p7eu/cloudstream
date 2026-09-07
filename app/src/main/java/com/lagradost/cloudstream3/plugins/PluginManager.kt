@@ -63,6 +63,9 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStreamReader
 
@@ -744,6 +747,21 @@ object PluginManager {
          plugins.keys.toList()
              .filter { it.startsWith(accountDir) }
              .forEach { unloadPlugin(it) }
+     }
+
+     fun switchAccountPlugins(context: Context, oldAccountId: String) {
+         unloadAccountPlugins(context, oldAccountId)
+         
+         CoroutineScope(Dispatchers.IO).launch {
+             try {
+                 ___DO_NOT_CALL_FROM_A_PLUGIN_loadAllOnlinePlugins(context)
+                 main {
+                     afterPluginsLoadedEvent.invoke(true)
+                 }
+             } catch (t: Throwable) {
+                 logError(t)
+             }
+         }
      }
      
     fun getPluginSanitizedFileName(name: String): String {
