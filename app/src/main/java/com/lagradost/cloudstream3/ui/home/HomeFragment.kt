@@ -680,13 +680,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.apply {
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
-            homeApiFab.setOnClickListener(apiChangeClickListener)
-            homeApiFab.setOnLongClickListener {
-                if (currentApiName == noneApi.name) return@setOnLongClickListener false
-                homeViewModel.loadAndCancel(currentApiName, forceReload = true, fromUI = true)
-                showToast(R.string.action_reload, Toast.LENGTH_SHORT)
-                true
-            }
             homeChangeApi.setOnClickListener(apiChangeClickListener)
             homeSwitchAccount.setOnClickListener {
                 activity?.showAccountSelectLinear()
@@ -697,8 +690,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             )
             homeMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
             homeMasterRecycler.adapter = homeMasterAdapter
-
-            homeApiFab.isVisible = isLayout(PHONE)
 
             homePreviewReloadProvider.setOnClickListener {
                 homeViewModel.loadAndCancel(
@@ -750,15 +741,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (isLayout(PHONE)) {
                         // Fab is only relevant to Phone
-                        if (dy > 0) { //check for scroll down
-                            homeApiFab.shrink() // hide
-                            homeRandom.shrink()
-                        } else if (dy < -5) {
-                            if (isLayout(PHONE)) {
-                                homeApiFab.extend() // show
-                                homeRandom.extend()
-                            }
-                        }
                     } else {
                         // Header scrolling is only relevant to TV/Emulator
 
@@ -812,15 +794,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     getString(R.string.random_button_key),
                     false
                 )
-            binding.homeRandom.visibility = View.GONE
-            binding.homeRandomButtonTv.visibility = View.GONE
         }
 
         observe(homeViewModel.apiName) { apiName ->
             currentApiName = apiName
             val displayApiName = context?.getDisplayName(apiName) ?: apiName
             binding.apply {
-                homeApiFab.text = displayApiName
                 homeChangeApi.text = displayApiName
                 homePreviewReloadProvider.isGone = (apiName == noneApi.name)
                 homePreviewSearchButton.isGone = (apiName == noneApi.name)
@@ -857,18 +836,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                                 .flatMap { it.list.list }
                                 .distinctBy { it.url }
                             val hasItems = distinct.isNotEmpty()
-                            val isPhone = isLayout(PHONE)
-                            val randomClickListener = View.OnClickListener {
-                                distinct.randomOrNull()?.let { activity.loadSearchResult(it) }
-                            }
-
-                            homeRandom.isVisible = isPhone && hasItems
-                            homeRandom.setOnClickListener(randomClickListener)
-                            homeRandomButtonTv.isVisible = !isPhone && hasItems
-                            homeRandomButtonTv.setOnClickListener(randomClickListener)
                         } else {
-                            homeRandom.isGone = true
-                            homeRandomButtonTv.isGone = true
+                            // nothing
                         }
                     }
                     //Open browser directly, without a menu.
