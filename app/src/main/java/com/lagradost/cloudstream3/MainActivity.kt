@@ -179,6 +179,8 @@ import com.lagradost.cloudstream3.utils.downloader.DownloadQueueManager
 import com.lagradost.cloudstream3.utils.setText
 import com.lagradost.cloudstream3.utils.setTextHtml
 import com.lagradost.cloudstream3.utils.txt
+import com.lagradost.cloudstream4.compose.CloudStreamThemeAppSettings
+import com.lagradost.cloudstream4.theme.CloudStreamTheme
 import com.lagradost.safefile.SafeFile
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -1297,6 +1299,14 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                 padRight = false,
                 padTop = false
             )
+
+            composeView.apply {
+                setContent {
+                    CloudStreamThemeAppSettings {
+                        MainActivityScreen.Content()
+                    }
+                }
+            }
         }
 
         // overscan
@@ -1369,7 +1379,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                     }
 
                     //Automatically download not existing plugins, using mode specified.
-                    val autoDownloadPlugin = AutoDownloadMode.getEnum(
+                    /*val autoDownloadPlugin = AutoDownloadMode.getEnum(
                         settingsManager.getInt(
                             getString(R.string.auto_download_plugins_key),
                             0
@@ -1380,7 +1390,7 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
                             this@MainActivity,
                             autoDownloadPlugin
                         )
-                    }
+                    }*/
                 }
 
                 ioSafe {
@@ -1979,9 +1989,9 @@ class MainActivity : AppCompatActivity(), ColorPickerDialogListener, BiometricCa
 
         handleAppIntent(intent)
 
-        ioSafe {
-            runAutoUpdate()
-        }
+        //ioSafe {
+        //    runAutoUpdate()
+        //}
 
         FcastManager().init(this, false)
 

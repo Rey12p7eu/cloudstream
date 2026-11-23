@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fleeksoft.ksoup.Ksoup
 import com.lagradost.cloudstream3.AudioFile
 import com.lagradost.cloudstream3.IDownloadableMinimum
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.app
@@ -80,6 +79,7 @@ import com.lagradost.cloudstream3.extractors.FileMoonSx
 import com.lagradost.cloudstream3.extractors.FilemoonV2
 import com.lagradost.cloudstream3.extractors.Filesim
 import com.lagradost.cloudstream3.extractors.Firestream
+import com.lagradost.cloudstream3.extractors.FirestreamSite
 import com.lagradost.cloudstream3.extractors.Multimoviesshg
 import com.lagradost.cloudstream3.extractors.FlaswishCom
 import com.lagradost.cloudstream3.extractors.Flyfile
@@ -112,6 +112,7 @@ import com.lagradost.cloudstream3.extractors.HDStreamAble
 import com.lagradost.cloudstream3.extractors.Habetar
 import com.lagradost.cloudstream3.extractors.Handfacesnap
 import com.lagradost.cloudstream3.extractors.Haxloppd
+import com.lagradost.cloudstream3.extractors.Hexload
 import com.lagradost.cloudstream3.extractors.Hgcloudto
 import com.lagradost.cloudstream3.extractors.HglinkTo
 import com.lagradost.cloudstream3.extractors.HgplayCDN
@@ -307,6 +308,7 @@ import com.lagradost.cloudstream3.extractors.Vide0Net
 import com.lagradost.cloudstream3.extractors.Vidmatrixa
 import com.lagradost.cloudstream3.extractors.Vids
 import com.lagradost.cloudstream3.extractors.Vidsonic
+import com.lagradost.cloudstream3.extractors.Vixeo
 import com.lagradost.cloudstream3.extractors.VkExtractor
 import com.lagradost.cloudstream3.extractors.Voe
 import com.lagradost.cloudstream3.extractors.Voe1
@@ -464,7 +466,6 @@ val INFER_TYPE: ExtractorLinkType? = null
  *
  * ClearKey is supported on Android devices running Android 5.0 (API Level 21) and up.
  */
-@Prerelease
 val CLEARKEY_DRM_UUID = Uuid.fromLongs(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL)
 
 /**
@@ -473,7 +474,6 @@ val CLEARKEY_DRM_UUID = Uuid.fromLongs(-0x1d8e62a7567a4c37L, 0x781AB030AF78D30EL
  *
  * Widevine is supported on Android devices running Android 4.3 (API Level 18) and up.
  */
-@Prerelease
 val WIDEVINE_DRM_UUID = Uuid.fromLongs(-0x121074568629b532L, -0x5c37d8232ae2de13L)
 
 /**
@@ -483,7 +483,6 @@ val WIDEVINE_DRM_UUID = Uuid.fromLongs(-0x121074568629b532L, -0x5c37d8232ae2de13
  * PlayReady is supported on all AndroidTV devices. Note that most other Android devices do not
  * provide PlayReady support.
  */
-@Prerelease
 val PLAYREADY_DRM_UUID = Uuid.fromLongs(-0x65fb0f8667bfbd7aL, -0x546d19a41f77a06bL)
 
 // Deprecate after next stable
@@ -545,7 +544,6 @@ suspend fun newDrmExtractorLink(
     return builder
 }
 
-@Prerelease
 suspend fun newDrmExtractorLink(
     source: String,
     name: String,
@@ -1312,6 +1310,7 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     Ds2play(),
     Ds2video(),
     Vidsonic(),
+    Vixeo(),
     InternetArchive(),
     VidStack(),
     GDMirrorbot(),
@@ -1338,8 +1337,10 @@ val extractorApis: AtomicMutableList<ExtractorApi> = atomicListOf(
     ByseQekaho(),
     Flyfile(),
     Firestream(),
+    FirestreamSite(),
     Vids(),
-    Playmate()
+    Playmate(),
+    Hexload(),
 )
 
 

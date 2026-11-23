@@ -2,7 +2,6 @@ package com.lagradost.cloudstream3.network
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
 import com.lagradost.cloudstream3.mvvm.safe
@@ -37,7 +36,7 @@ fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClie
     safe { Security.insertProviderAt(Conscrypt.newProvider(), 1) }
     
     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
-    val dns = settingsManager.getInt(context.getString(R.string.dns_pref), 0)
+    val dns = settingsManager.getInt(context.getString(R.string.dns_key), 0)
     val baseClient = OkHttpClient.Builder()
         .followRedirects(true)
         .followSslRedirects(true)

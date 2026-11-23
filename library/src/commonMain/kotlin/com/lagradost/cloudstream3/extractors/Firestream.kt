@@ -1,7 +1,6 @@
 package com.lagradost.cloudstream3.extractors
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lagradost.cloudstream3.Prerelease
 import com.lagradost.cloudstream3.SubtitleFile
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.utils.ExtractorApi
@@ -10,7 +9,11 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-class Firestream : ExtractorApi() {
+class FirestreamSite : Firestream() {
+    override val mainUrl = "https://firestream.site"
+}
+
+open class Firestream : ExtractorApi() {
     override val name = "Firestream"
     override val mainUrl = "https://firestream.to"
     override val requiresReferer = false
@@ -21,7 +24,7 @@ class Firestream : ExtractorApi() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit,
     ) {
-        val id = url.removeSuffix("/").substringAfterLast("/")
+        val id = url.removeSuffix("/").substringAfterLast("/").substringBefore("?")
         val url = getExtractorUrl(id)
 
         val doc = app.get(url).document
