@@ -681,6 +681,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.apply {
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
             //homeChangeApiLoading.setOnClickListener(apiChangeClickListener)
+            homeApiFab.setOnClickListener(apiChangeClickListener)
+            homeApiFab.setOnLongClickListener {
+                if (currentApiName == noneApi.name) return@setOnLongClickListener false
+                homeViewModel.loadAndCancel(currentApiName, forceReload = true, fromUI = true)
+                showToast(R.string.action_reload, Toast.LENGTH_SHORT)
+                true
+            }
             homeChangeApi.setOnClickListener(apiChangeClickListener)
             homeSwitchAccount.setOnClickListener {
                 activity?.showAccountSelectLinear()
@@ -691,6 +698,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             )
             homeMasterRecycler.setRecycledViewPool(ParentItemAdapter.sharedPool)
             homeMasterRecycler.adapter = homeMasterAdapter
+
+            homeApiFab.isVisible = isLayout(PHONE)
 
             homePreviewReloadProvider.setOnClickListener {
                 homeViewModel.loadAndCancel(
@@ -742,6 +751,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (isLayout(PHONE)) {
                         // Fab is only relevant to Phone
+                        if (dy > 0) { //check for scroll down
+                            homeApiFab.shrink() // hide
+                        } else if (dy < -5) {
+                            if (isLayout(PHONE)) {
+                                homeApiFab.extend() // show
+                            }
+                        }
                     } else {
                         // Header scrolling is only relevant to TV/Emulator
 
@@ -804,6 +820,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             currentApiName = apiName
             val displayApiName = context?.getDisplayName(apiName) ?: apiName
             binding.apply {
+                homeApiFab.text = displayApiName
                 homeChangeApi.text = displayApiName
                 homePreviewReloadProvider.isGone = (apiName == noneApi.name)
                 homePreviewSearchButton.isGone = (apiName == noneApi.name)
