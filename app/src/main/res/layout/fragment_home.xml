@@ -226,9 +226,11 @@
         android:id="@+id/home_api_fab"
         style="@style/ExtendedFloatingActionButton"
         android:text="@string/home_source"
-        android:textColor="?attr/textColor"
+        android:textColor="@color/primaryGrayBackground"
         android:visibility="gone"
+        app:backgroundTint="@color/colorMintGreen"
         app:icon="@drawable/ic_baseline_filter_list_24"
+        app:iconTint="@color/primaryGrayBackground"
         tools:ignore="ContentDescription"
         tools:visibility="visible" />
 
